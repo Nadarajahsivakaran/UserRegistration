@@ -1,5 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { authLogin, authRegister, authUpdate, authUser } from "./authService";
+import {
+  authAvatar,
+  authLogin,
+  authRegister,
+  authUpdate,
+  authUser,
+} from "./authService";
 
 export const register = createAsyncThunk(
   "auth/register",
@@ -37,6 +43,15 @@ export const login = createAsyncThunk("auth/login", async (user, thunkApi) => {
 export const user = createAsyncThunk("auth/user", async (thunkApi) => {
   try {
     return await authUser();
+  } catch (error) {
+    const message = error.message;
+    return thunkApi.rejectWithValue(message);
+  }
+});
+
+export const avatar = createAsyncThunk("auth/avatar", async (file,thunkApi) => {
+  try {
+    return await authAvatar(file);
   } catch (error) {
     const message = error.message;
     return thunkApi.rejectWithValue(message);
@@ -118,7 +133,20 @@ export const authSlice = createSlice({
         state.isError = true;
         state.isLoading = false;
         state.message = action.payload;
-      });
+      })
+      .addCase(avatar.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(avatar.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.activeUser = action.payload
+      })
+      .addCase(avatar.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.message = action.payload;
+      })
   },
 });
 

@@ -35,7 +35,8 @@ export const authUser = async () => {
       },
     }
   );
-  return response.data.result;
+  console.log(response.data.result.patient);
+  return response.data.result.patient;
 };
 
 export const authUpdate = async (userdata) => {
@@ -53,4 +54,23 @@ export const authUpdate = async (userdata) => {
     }
   );
   return response.data.result;
+};
+
+export const authAvatar = async (file) => {
+  console.log("filedata", file);
+  const formData = new FormData();
+  formData.append("profile_image", file);
+  const response = await axios.post(
+    "https://mditest.elifeamerica.com/api/v1/profile/avatar",
+    formData,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  console.log("succes");
+  console.log(response.data.result.patient);
+  return response.data.result.patient;
 };
